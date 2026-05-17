@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bikram Roy | Futuristic Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #050816;
+      --card: rgba(15, 23, 42, 0.7);
+      --border: rgba(255,255,255,0.1);
+      --primary: #5eead4;
+      --secondary: #8b5cf6;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --glow: 0 0 40px rgba(94, 234, 212, 0.35);
+    }
+
+    body {
+      background: radial-gradient(circle at top left, rgba(139,92,246,0.25), transparent 30%),
+                  radial-gradient(circle at bottom right, rgba(94,234,212,0.2), transparent 25%),
+                  var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -1;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 85%);
+    }
+
+    .container {
+      width: min(1180px, 92%);
+      margin: auto;
+      padding: 40px 0 80px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 30px;
+      align-items: center;
+      min-height: 90vh;
+    }
+
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--glow);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(94,234,212,0.1);
+      border: 1px solid rgba(94,234,212,0.25);
+      color: var(--primary);
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 8vw, 6rem);
+      line-height: 0.95;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 20px;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, var(--primary), #ffffff, var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--muted);
+      max-width: 700px;
+      margin-bottom: 30px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 24px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: #000;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(94,234,212,0.25);
+    }
+
+    .profile-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 450px;
+    }
+
+    .orb {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(94,234,212,0.5), transparent 70%);
+      top: -40px;
+      right: -30px;
+      filter: blur(10px);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(20px); }
+    }
+
+    .profile-card h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .profile-card p {
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 30px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat h3 {
+      font-size: 2rem;
+      color: var(--primary);
+    }
+
+    section {
+      margin-top: 80px;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(var(--primary), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 28px;
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 32px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 20px var(--primary);
+    }
+
+    .timeline-item h3 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+
+    .timeline-item span {
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .timeline-item p {
+      margin-top: 14px;
+      color: var(--muted);
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .skill-card {
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: 0.3s ease;
+    }
+
+    .skill-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(94,234,212,0.4);
+    }
+
+    .skill-card h4 {
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .project-card {
+      position: relative;
+      overflow: hidden;
+      padding: 28px;
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(94,234,212,0.08));
+      pointer-events: none;
+    }
+
+    .project-card h3 {
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+    }
+
+    .project-card p {
+      color: var(--muted);
+    }
+
+    .contact {
+      text-align: center;
+      padding: 60px 20px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .contact p {
+      color: var(--muted);
+      margin: 16px auto 30px;
+      max-width: 650px;
+    }
+
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid"></div>
+
+  <div class="container">
+
+    <section class="hero">
+      <div>
+        <div class="tag">🚀 Senior Digital Marketing Manager • SaaS • AI Enthusiast</div>
+        <h1>
+          Bikram <span class="gradient">Roy</span>
+        </h1>
+        <p class="subtitle">
+          Growth-focused digital marketing leader with 13+ years of experience in SaaS, retail technology, ERP solutions, content strategy, lead generation, performance marketing, and AI-driven innovation.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#experience" class="btn btn-primary">Explore Experience</a>
+          <a href="#contact" class="btn btn-secondary">Connect With Me</a>
+        </div>
+      </div>
+
+      <div class="glass profile-card">
+        <div class="orb"></div>
+
+        <h2>Professional Snapshot</h2>
+        <p>
+          Currently driving digital marketing initiatives for enterprise retail SaaS solutions with expertise across SEO, paid campaigns, content marketing, product positioning, omnichannel commerce, and AI-led marketing transformation.
+        </p>
+
+        <div class="stats">
+          <div class="stat">
+            <h3>13+</h3>
+            <p>Years Experience</p>
+          </div>
+
+          <div class="stat">
+            <h3>360°</h3>
+            <p>Digital Marketing</p>
+          </div>
+
+          <div class="stat">
+            <h3>SaaS</h3>
+            <p>ERP & Retail Tech</p>
+          </div>
+
+          <div class="stat">
+            <h3>AI</h3>
+            <p>Future-Focused Learning</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <h2 class="section-title">Experience Timeline</h2>
+
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <span>2022 — Present</span>
+          <h3>Senior Digital Marketing Manager • Ginesys</h3>
+          <p>
+            Leading integrated marketing strategies for SaaS-based ERP, POS, OMS, analytics, and retail technology solutions. Managing SEO growth, content marketing, lead generation, WhatsApp campaigns, branding initiatives, AI-driven workflows, and omnichannel digital campaigns.
+          </p>
+        </div>
+
+        <div class="timeline-item">
+          <span>Previous Experience</span>
+          <h3>Digital Marketing & Growth Leadership</h3>
+          <p>
+            Built expertise across performance marketing, B2B lead generation, content ecosystems, campaign management, digital branding, social media strategy, and marketing automation for technology-focused businesses.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Core Skills</h2>
+
+      <div class="skills-grid">
+
+        <div class="skill-card">
+          <h4>SEO & Organic Growth</h4>
+          <p>Technical SEO, content optimization, keyword strategy, traffic scaling.</p>
+        </div>
+
+        <div class="skill-card">
+          <h4>Performance Marketing</h4>
+          <p>Google Ads, Meta Ads, ROI optimization, paid acquisition funnels.</p>
+        </div>
+
+        <div class="skill-card">
+          <h4>Content Strategy</h4>
+          <p>Long-form blogs, SaaS storytelling, B2B communication, thought leadership.</p>
+        </div>
+
+        <div class="skill-card">
+          <h4>SaaS Marketing</h4>
+          <p>ERP, POS, OMS, retail technology positioning and GTM strategy.</p>
+        </div>
+
+        <div class="skill-card">
+          <h4>AI & Product Thinking</h4>
+          <p>Exploring AI workflows, RAG concepts, PM thinking, automation use cases.</p>
+        </div>
+
+        <div class="skill-card">
+          <h4>Analytics & Reporting</h4>
+          <p>Campaign analysis, BI reporting, performance insights, optimization.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Highlighted Projects</h2>
+
+      <div class="projects">
+
+        <div class="project-card">
+          <h3>Retail SaaS Content Ecosystem</h3>
+          <p>
+            Created and scaled high-impact SEO blog strategies focused on ERP, POS, omnichannel retail, GST solutions, and analytics, contributing to organic visibility and lead acquisition.
+          </p>
+        </div>
+
+        <div class="project-card">
+          <h3>AI-Driven Marketing Exploration</h3>
+          <p>
+            Researching AI workflows, prompt engineering, RAG concepts, and product-oriented thinking to integrate intelligent automation into digital marketing processes.
+          </p>
+        </div>
+
+        <div class="project-card">
+          <h3>Omnichannel Brand Campaigns</h3>
+          <p>
+            Led integrated digital campaigns for SaaS retail products across social, paid media, WhatsApp, and content channels with focus on enterprise retail audiences.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="contact">
+        <h2 class="section-title">Let’s Build The Future</h2>
+        <p>
+          Open to leadership opportunities in Digital Marketing, Product Marketing, SaaS Growth, AI-led Marketing Strategy, and Product Thinking.
+        </p>
+
+        <div class="hero-buttons" style="justify-content:center;">
+          <button class="btn btn-primary" onclick="showMessage()">View Contact Intent</button>
+        </div>
+
+        <div id="dynamicMessage" style="margin-top:24px;color:var(--primary);font-weight:600;"></div>
+      </div>
+    </section>
+
+    <footer>
+      Designed with futuristic UI aesthetics • Built in HTML, CSS & JavaScript • 2026
+    </footer>
+
+  </div>
+
+  <script>
+    const texts = [
+      'Passionate about AI-powered marketing transformation.',
+      'Building bridges between marketing, technology, and product thinking.',
+      'Driven by innovation, storytelling, and scalable growth.'
+    ];
+
+    let index = 0;
+
+    function showMessage() {
+      document.getElementById('dynamicMessage').innerText = texts[index];
+      index = (index + 1) % texts.length;
+    }
+
+    const revealElements = document.querySelectorAll('.timeline-item, .skill-card, .project-card');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting) {
+          entry.target.style.opacity = 1;
+          entry.target.style.transform = 'translateY(0px)';
+        }
+      });
+    }, { threshold: 0.2 });
+
+    revealElements.forEach(el => {
+      el.style.opacity = 0;
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'all 0.7s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
