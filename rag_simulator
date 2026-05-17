@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Simulator | Learn Retrieval-Augmented Generation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #040816;
+      --card: rgba(15, 23, 42, 0.72);
+      --border: rgba(255,255,255,0.08);
+      --primary: #5eead4;
+      --secondary: #8b5cf6;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --danger: #fb7185;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(94,234,212,0.12), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(139,92,246,0.16), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -1;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 85%);
+    }
+
+    .container {
+      width: min(1280px, 94%);
+      margin: auto;
+      padding: 40px 0 80px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(94,234,212,0.1);
+      border: 1px solid rgba(94,234,212,0.2);
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, var(--primary), white, var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin: auto;
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1.8;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 50px 0;
+    }
+
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      border-radius: 24px;
+      padding: 24px;
+      transition: 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step:hover {
+      transform: translateY(-6px);
+      border-color: rgba(94,234,212,0.4);
+    }
+
+    .step::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(94,234,212,0.06));
+      pointer-events: none;
+    }
+
+    .step-number {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: black;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .step h3 {
+      margin-bottom: 12px;
+    }
+
+    .step p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .simulator {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 40px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      backdrop-filter: blur(20px);
+    }
+
+    .panel h2 {
+      margin-bottom: 20px;
+      font-size: 1.6rem;
+    }
+
+    textarea,
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px;
+      color: white;
+      font-size: 15px;
+      margin-bottom: 18px;
+      outline: none;
+      transition: 0.3s ease;
+    }
+
+    textarea:focus,
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 25px rgba(94,234,212,0.2);
+    }
+
+    textarea {
+      min-height: 220px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    button {
+      padding: 14px 24px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: black;
+      font-weight: 700;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(94,234,212,0.25);
+    }
+
+    .output {
+      margin-top: 20px;
+    }
+
+    .chunk {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-left: 4px solid var(--primary);
+      padding: 18px;
+      border-radius: 18px;
+      margin-bottom: 16px;
+      animation: fadeUp 0.5s ease;
+    }
+
+    .chunk h4 {
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .chunk p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .highlight {
+      border-left-color: var(--secondary);
+      background: rgba(139,92,246,0.08);
+    }
+
+    .answer-box {
+      background: rgba(94,234,212,0.08);
+      border: 1px solid rgba(94,234,212,0.2);
+      border-radius: 20px;
+      padding: 24px;
+      margin-top: 25px;
+      animation: fadeUp 0.5s ease;
+    }
+
+    .answer-box h3 {
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .answer-box p {
+      color: white;
+      line-height: 1.8;
+    }
+
+    .vector-box {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .vector {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--primary);
+      font-size: 13px;
+    }
+
+    .info {
+      margin-top: 60px;
+      padding: 35px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .info h2 {
+      margin-bottom: 16px;
+    }
+
+    .info p {
+      color: var(--muted);
+      line-height: 1.9;
+      margin-bottom: 14px;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .simulator {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grid"></div>
+
+  <div class="container">
+
+    <div class="hero">
+      <div class="tag">🧠 Interactive AI Learning Simulator</div>
+
+      <h1>
+        Learn <span class="gradient">RAG</span>
+        Visually
+      </h1>
+
+      <p class="subtitle">
+        This simulator demonstrates how Retrieval-Augmented Generation works step-by-step. Enter large information, split it into chunks, simulate embeddings/vector search, retrieve relevant chunks based on a user query, and generate an AI response.
+      </p>
+    </div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Document Upload</h3>
+        <p>
+          Large information or documents are added into the system.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Chunking</h3>
+        <p>
+          The system breaks long information into smaller meaningful pieces called chunks.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Embeddings</h3>
+        <p>
+          Chunks are converted into vectors/semantic representations for similarity search.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Retrieval</h3>
+        <p>
+          User queries are matched with the most relevant chunks from the vector database.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">5</div>
+        <h3>Generation</h3>
+        <p>
+          The AI generates a grounded answer using retrieved information.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="simulator">
+
+      <div class="panel">
+        <h2>📄 Knowledge Base</h2>
+
+        <textarea id="documentInput">
+RAG stands for Retrieval-Augmented Generation. It helps AI retrieve relevant information before answering.
+
+Chunking breaks large documents into smaller pieces so the system can search efficiently.
+
+Embeddings convert text into vectors so similar meaning can be matched mathematically.
+
+Vector databases store embeddings and help retrieve the most relevant chunks quickly.
+
+RAG reduces hallucinations because responses are grounded in external knowledge.
+
+RAG is widely used in enterprise AI chatbots, document assistants, customer support systems, and AI search engines.
+        </textarea>
+
+        <input type="text" id="queryInput" value="How does RAG reduce hallucinations?" />
+
+        <button onclick="runRAG()">Run RAG Simulation</button>
+      </div>
+
+      <div class="panel">
+        <h2>⚡ RAG Processing Engine</h2>
+
+        <div id="processingOutput" class="output">
+          <p style="color: var(--muted); line-height:1.8;">
+            The simulation results will appear here.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info">
+      <h2>💡 What You Are Actually Seeing</h2>
+
+      <p>
+        In real-world RAG systems, embeddings are generated using AI embedding models and stored in vector databases such as Pinecone, Weaviate, FAISS, or ChromaDB.
+      </p>
+
+      <p>
+        When a user enters a prompt, the prompt is also converted into an embedding vector. The vector database finds semantically similar chunks using mathematical similarity search.
+      </p>
+
+      <p>
+        The retrieved chunks are then inserted into the LLM prompt context before the AI generates the final response.
+      </p>
+
+      <p>
+        This is why RAG systems are more accurate, updatable, and grounded compared to normal LLM responses.
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+
+    function chunkDocument(text) {
+      return text
+        .split(/\n+/)
+        .map(chunk => chunk.trim())
+        .filter(chunk => chunk.length > 0);
+    }
+
+    function createFakeEmbedding(text) {
+      const words = text
+        .toLowerCase()
+        .replace(/[^a-zA-Z ]/g, '')
+        .split(' ')
+        .filter(Boolean);
+
+      return [...new Set(words)].slice(0, 8);
+    }
+
+    function similarityScore(chunk, query) {
+      const chunkWords = chunk.toLowerCase().split(' ');
+      const queryWords = query.toLowerCase().split(' ');
+
+      let score = 0;
+
+      queryWords.forEach(word => {
+        if (chunkWords.includes(word)) {
+          score++;
+        }
+      });
+
+      return score;
+    }
+
+    function generateAnswer(relevantChunks, query) {
+      if (relevantChunks.length === 0) {
+        return 'No relevant information found. In a real RAG system, retrieval quality depends on embeddings and vector similarity.';
+      }
+
+      return 'Based on the retrieved information, the answer to your query is: ' +
+        relevantChunks.map(c => c.text).join(' ');
+    }
+
+    function runRAG() {
+      const documentText = document.getElementById('documentInput').value;
+      const query = document.getElementById('queryInput').value;
+      const output = document.getElementById('processingOutput');
+
+      output.innerHTML = '';
+
+      const chunks = chunkDocument(documentText);
+
+      const chunkTitle = document.createElement('div');
+      chunkTitle.innerHTML = '<h3 style="margin-bottom:20px;color:var(--primary);">Step 1 & 2 — Chunking</h3>';
+      output.appendChild(chunkTitle);
+
+      const chunkObjects = chunks.map((chunk, index) => {
+        const embedding = createFakeEmbedding(chunk);
+
+        const div = document.createElement('div');
+        div.className = 'chunk';
+
+        div.innerHTML = `
+          <h4>Chunk ${index + 1}</h4>
+          <p>${chunk}</p>
+          <div class="vector-box">
+            ${embedding.map(v => `<span class="vector">${v}</span>`).join('')}
+          </div>
+        `;
+
+        output.appendChild(div);
+
+        return {
+          text: chunk,
+          embedding,
+          score: similarityScore(chunk, query)
+        };
+      });
+
+      const retrievalTitle = document.createElement('div');
+      retrievalTitle.innerHTML = '<h3 style="margin:30px 0 20px;color:var(--secondary);">Step 3 & 4 — Retrieval</h3>';
+      output.appendChild(retrievalTitle);
+
+      const relevantChunks = chunkObjects
+        .filter(chunk => chunk.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 2);
+
+      relevantChunks.forEach((chunk, index) => {
+        const div = document.createElement('div');
+        div.className = 'chunk highlight';
+
+        div.innerHTML = `
+          <h4>Retrieved Chunk ${index + 1}</h4>
+          <p>${chunk.text}</p>
+          <p style="margin-top:10px;color:var(--primary);">
+            Similarity Score: ${chunk.score}
+          </p>
+        `;
+
+        output.appendChild(div);
+      });
+
+      const answer = generateAnswer(relevantChunks, query);
+
+      const answerBox = document.createElement('div');
+      answerBox.className = 'answer-box';
+
+      answerBox.innerHTML = `
+        <h3>Step 5 — AI Generation</h3>
+        <p>${answer}</p>
+      `;
+
+      output.appendChild(answerBox);
+
+      output.scrollIntoView({ behavior: 'smooth' });
+    }
+
+  </script>
+
+</body>
+</html>
